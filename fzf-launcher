@@ -1,13 +1,25 @@
 #!/usr/bin/env bash
 
+selection=${NNN_SEL:-${XDG_CONFIG_HOME:-$HOME/.config}/nnn/.selection}
 FPATH="$1"
+OPENER=$(printf '%s\n' pdfarranger okular zathura | fzf) || exit 0
+# OPENER=$(j4-dmenu-desktop --dmenu="fzf" --no-exec --no-generic 2>/dev/null)
 
-if [ -z "$FPATH" ]; then
+if [ -s "$selection" ]; then
+    targets=()
+    while IFS= read -r -d '' entry || [ -n "$entry" ]; do
+        targets+=( "$entry" )
+    done < "$selection"
+
+    if [ -p "$NNN_PIPE" ]; then
+        printf "-" > "$NNN_PIPE"
+    fi
+
+    for f in "${targets[@]}"; do
+        "$OPENER" "$f" > /dev/null 2>&1 &
+    done
+elif [ -n "$FPATH" ]; then
+    "$OPENER" "$FPATH" > /dev/null 2>&1 &
+else
     exit 0
-fi
-
-selected_cmd=$(j4-dmenu-desktop --dmenu="fzf" --no-exec --no-generic 2>/dev/null)
-
-if [ -n "$selected_cmd" ]; then
-    eval $selected_cmd $FPATH 2>/dev/null &
 fi

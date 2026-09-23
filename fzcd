@@ -40,7 +40,7 @@ elif ! [ -s "$LIST" ]; then
     # sel=$(fzf)
     # Show only the file and parent dir
     # sel=$(fzf --delimiter / --with-nth=-2,-1 --tiebreak=begin --info=hidden)
-    sel=$(fd --type directory --base-directory "$HOME" | fzf) || return
+    sel=$(fd --type directory --base-directory "$HOME" | fzf) || exit
     LIST=''
 fi
 
