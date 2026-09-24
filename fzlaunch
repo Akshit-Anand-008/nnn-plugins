@@ -2,7 +2,7 @@
 
 selection=${NNN_SEL:-${XDG_CONFIG_HOME:-$HOME/.config}/nnn/.selection}
 FPATH="$1"
-OPENER=$(printf '%s\n' pdfarranger okular zathura | fzf) || exit 0
+OPENER=$(printf '%s\n' pdfarranger okular zathura firefox| fzf) || exit 0
 # OPENER=$(j4-dmenu-desktop --dmenu="fzf" --no-exec --no-generic 2>/dev/null)
 
 if [ -s "$selection" ]; then
