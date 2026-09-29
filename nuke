@@ -182,7 +182,8 @@ handle_extension() {
 
         ## PDF
         pdf)
-            handle_pdf
+            handle_fallback
+            # handle_pdf
             exit 1;;
 
         ## Audio
@@ -249,14 +250,19 @@ handle_extension() {
 
         ## JSON
         json)
-            if type jq >/dev/null 2>&1; then
-                jq --color-output . "${FPATH}" | eval "$PAGER"
-                exit 0
-            elif type python >/dev/null 2>&1; then
-                python -m json.tool -- "${FPATH}" | eval "$PAGER"
-                exit 0
-            fi
-            ;;
+            "$EDITOR" "${FPATH}"
+            exit 0;;
+            # if type jq >/dev/null 2>&1; then
+            #     jq --color-output . "${FPATH}" | eval "$PAGER"
+            #     exit 0
+            # elif type python >/dev/null 2>&1; then
+            #     python -m json.tool -- "${FPATH}" | eval "$PAGER"
+            #     exit 0
+            # else
+            #     "$EDITOR" "${FPATH}"
+            #     exit 0;;
+            # fi
+            # ;;
     esac
 }
 
