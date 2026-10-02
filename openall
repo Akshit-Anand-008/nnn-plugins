@@ -1,39 +1,34 @@
 #!/usr/bin/env bash
 
-# Description: Open selected files in nuke one by one or in oneshot
-#
-# Notes: 1. Opens the hovered file if the selection is empty
-#        2. nuke is the default, set OPENER below for custom
-#        3. Opener is invoked once for each file in a loop
-#        4. Keep pressing "Enter" to open files one by one
-#
-# Shell: bash
-# Author: Arun Prakash Jana
-
-sel=${NNN_SEL:-${XDG_CONFIG_HOME:-$HOME/.config}/nnn/.selection}
+selection=${NNN_SEL:-${XDG_CONFIG_HOME:-$HOME/.config}/nnn/.selection}
 OPENER="${XDG_CONFIG_HOME:-$HOME/.config}/nnn/plugins/nuke"
 
-if [ -s "$sel" ]; then
-    targets=()
+text_files=()
+other_files=()
+
+categorize_file() {
+    local f="$1"
+    case $(file --mime-type -Lb -- "$f") in
+        text/*) text_files+=("$f") ;;
+        *)      other_files+=("$f") ;;
+    esac
+}
+
+if [ -s "$selection" ]; then
     while IFS= read -r -d '' entry || [ -n "$entry" ]; do
-        targets+=( "$entry" )
-    done < "$sel"
-
-    elements=${#targets[@]}
-
-    if (( elements == 1 )); then
-        # If there's only one file selected, open without prompts
-        "$OPENER" "${targets[0]}"
-    else
-        for ((index=0; index <= ${#targets[@]}; index++)); do
-            "$OPENER" "${targets[index]}"
-        done
-    fi
-
-    # Clear selection
-    if [ -s "$sel" ] && [ -p "$NNN_PIPE" ]; then
+        [ -n "$entry" ] && categorize_file "$entry"
+    done < "$selection"
+    if [ -p "$NNN_PIPE" ]; then
         printf "-" > "$NNN_PIPE"
     fi
-elif [ -n "$1" ]; then
-    "$OPENER" "$1"
+else
+    exit 0
+fi
+
+for f in "${other_files[@]}"; do
+    ${OPENER:-xdg-open} "$f" > /dev/null 2>&1 &
+done
+
+if [ ${#text_files[@]} -gt 0 ]; then
+    ${EDITOR:-vi} "${text_files[@]}"
 fi
