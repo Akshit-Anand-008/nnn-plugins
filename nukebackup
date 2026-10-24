@@ -321,13 +321,15 @@ handle_multimedia() {
 
         ## Image
         image/*)
-            if [ "$GUI" -ne 0 ]; then
+            if type imv >/dev/null 2>&1; then
+                load_dir imv "${FPATH}" >/dev/null 2>&1 &
+                exit 0
+            elif [ "$GUI" -ne 0 ]; then
                 xdg-open "${FPATH}" >/dev/null 2>&1 &
+                exit 0
+            fi
             #     if is_mac; then
             #         nohup open "${FPATH}" >/dev/null 2>&1 &
-            #         exit 0
-            #     elif type imv >/dev/null 2>&1; then
-            #         load_dir imv "${FPATH}" >/dev/null 2>&1 &
             #         exit 0
             #     elif type imvr >/dev/null 2>&1; then
             #         load_dir imvr "${FPATH}" >/dev/null 2>&1 &
@@ -348,7 +350,6 @@ handle_multimedia() {
             # elif type exiftool >/dev/null 2>&1; then
             #     exiftool "${FPATH}" | eval "$PAGER"
             #     exit 0
-            fi
             # local orientation
             # orientation="$( identify -format '%[EXIF:Orientation]\n' -- "${FPATH}" )"
             ## If orientation data is present and the image actually
