@@ -45,16 +45,14 @@ use_all ()
 }
 
 if [ -s "$selection" ]; then
-    # printf "Drop file (r). Drag selection (s), Drag current directory (d) or drag current file (f) [default=f]: "
-    # read -r resp
-    resp=s
+    printf "Drop file (r). Drag selection (s), Drag current directory (d) or drag current file (f) [default=f]: "
+    read -r resp
 else
     printf "Drop file (r). Drag current directory (d) or drag current file (f) [default=f]: "
-    # read -r resp
-    # if [ "$resp" = "s" ]; then
-    #     resp=f
-    # fi
-    resp=f
+    read -r resp
+    if [ "$resp" = "s" ]; then
+        resp=f
+    fi
 fi
 
 if [ "$resp" = "s" ]; then
