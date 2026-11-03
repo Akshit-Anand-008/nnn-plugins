@@ -6,7 +6,6 @@
 # Author: Akshit Anand
 
 . "$(dirname "$0")"/.nnn-plugin-helper
-# CTX=1
 
 dir=$(fd --type directory --base-directory "$HOME" | fzf) || exit
 
